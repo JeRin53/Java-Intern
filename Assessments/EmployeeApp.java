@@ -1,6 +1,12 @@
 import java.time.LocalDate;
 import java.time.Period;
 
+class InsufficentLeaveException extends Exception {
+    public InsufficentLeaveException(String message) {
+        super(message);
+    }
+}
+
 class Employee{
 
         String empId;
@@ -8,7 +14,7 @@ class Employee{
         LocalDate joiningDate;
         int totalLeaves;
 
-public void Employee(String id,String name,LocalDate date,int leaves){
+public  Employee(String id,String name,LocalDate date,int leaves){
         empId=id;
         empName=name;
         joiningDate=date;
@@ -16,11 +22,11 @@ public void Employee(String id,String name,LocalDate date,int leaves){
 }
      public String stringBuffer() {   
         StringBuffer sb= new StringBuffer();
-        sb.append("Employee");
+        sb.append("Employee ");
         sb.append(empName);
-        sb.append("has");
+        sb.append(" has ");
         sb.append(totalLeaves);
-        sb.append("leaves");
+        sb.append(" leaves");
         return sb.toString();
       }  
       
@@ -30,12 +36,13 @@ public void Employee(String id,String name,LocalDate date,int leaves){
                 return p.getYears();
       
       } 
-                public void applyLeave(int days) throws InsufficentLeaveException e{
+                public void applyLeave(int days) throws InsufficentLeaveException {
                 if(days>totalLeaves) {
-                        System.out.println("Insufficent leaves availablesrry....");                       
+                        throw new InsufficentLeaveException("Insufficient leaves available");
+               
                 }
-                totalLeaves= days - totalLeaves;
-                return totalLeaves;
+                totalLeaves= totalLeaves-days;
+              
                 
                 
                 
@@ -57,8 +64,8 @@ public class EmployeeApp {
          try {
                 
                 emp[i].applyLeave(5);
-            } catch (InsufficientLeaveException e) {
-                
+            } catch (InsufficentLeaveException e) {
+                System.out.println(e.getMessage());
             }
 
             System.out.println("Employee ID: " + emp[i].empId);
@@ -67,9 +74,9 @@ public class EmployeeApp {
             System.out.println("Years of Experience: " + emp[i].calculateExperience());
             System.out.println("Remaining Leaves: " + emp[i].totalLeaves);
             System.out.println("Message: " + emp[i].stringBuffer());
+            System.out.println("\n");
         }
         
         }
       }
       
-
