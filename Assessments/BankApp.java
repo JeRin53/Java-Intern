@@ -41,9 +41,10 @@ class BankAccount {
         int amount;
         
         public User(BankAccount acc, int amt, String name){
-            account = acc;
-            amount=amt;
-            setName(name);
+            super(name);
+            this.account = acc;
+            this.amount=amt;
+            
         }
         public void run(){
             account.withdraw(amount);
@@ -56,7 +57,7 @@ public class BankApp {
 
         BankAccount account = new BankAccount(1000);
 
-        User user1 = new User(account, 1000, "User1");
+        User user1 = new User(account, 800, "User1");
         User user2 = new User(account, 1200, "User2");
 
         user1.start();
