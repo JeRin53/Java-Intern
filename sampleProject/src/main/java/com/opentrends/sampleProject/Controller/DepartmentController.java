@@ -1,7 +1,7 @@
 package com.opentrends.sampleProject.Controller;
 
-import com.opentrends.sampleProject.converter.ConvertDtoToEntityClass;
-import com.opentrends.sampleProject.converter.ConvertEntityToDtoClass;
+import com.opentrends.sampleProject.converter.ConverterDepartmentToDepartmentDto;
+import com.opentrends.sampleProject.converter.ConverterDepartmentDtoToDepartment;
 import com.opentrends.sampleProject.Dto.DepartmentDto;
 import com.opentrends.sampleProject.Model.Department;
 import com.opentrends.sampleProject.Service.DepartmentService;
@@ -19,34 +19,43 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
     @Autowired
-    private ConvertDtoToEntityClass dtoToEntityClass;
+    private ConverterDepartmentDtoToDepartment dtoToEntityClass;
 
     @Autowired
-    private ConvertEntityToDtoClass entityToDtoClass;
+    private ConverterDepartmentToDepartmentDto entityToDtoClass;
 
 
 
     @PostMapping("/addDepartment")
     public DepartmentDto saveDepartment(@RequestBody DepartmentDto departmentDto) {
-        Department department= dtoToEntityClass.convertDtoToEntity(departmentDto);
+        Department department= dtoToEntityClass.convert(departmentDto);
         Department savedDepartment= departmentService.saveDepartment(department);
-        return entityToDtoClass.convertEntityToDto(savedDepartment);
+        return entityToDtoClass.convert(savedDepartment);
     }
 
     @GetMapping("/getDepartmentInfo")
     public List<DepartmentDto> fetchDepartment() {
         List<Department> departments=departmentService.fetchDepartment();
         return departments.stream()
-                .map(entityToDtoClass::convertEntityToDto)
+                .map(entityToDtoClass::convert)
+                .collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/departmentByName/{name}")
+    public List<DepartmentDto> findDepartmentByName(@PathVariable String name){
+        List<Department> departments = departmentService.findDepartmentByName(name);
+        return departments.stream()
+                .map(entityToDtoClass::convert)
                 .collect(Collectors.toList());
     }
 
 
     @PutMapping("/putDepartment/{departmentId}")
     public DepartmentDto updateDepartment(@RequestBody DepartmentDto departmentDto, @PathVariable("departmentId") Long departmentId) {
-        Department department = dtoToEntityClass.convertDtoToEntity(departmentDto);
+        Department department = dtoToEntityClass.convert(departmentDto);
         Department update=departmentService.updateDepartment(department,departmentId);
-        return entityToDtoClass.convertEntityToDto(update);
+        return entityToDtoClass.convert(update);
     }
 
     /*@DeleteMapping("/deleteDepartment/{departmentId}")
