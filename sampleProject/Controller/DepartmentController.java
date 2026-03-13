@@ -1,5 +1,6 @@
 package com.opentrends.sampleProject.Controller;
 
+import com.opentrends.sampleProject.Dto.DepartmentDtoProjection;
 import com.opentrends.sampleProject.converter.ConverterDepartmentToDepartmentDto;
 import com.opentrends.sampleProject.converter.ConverterDepartmentDtoToDepartment;
 import com.opentrends.sampleProject.Dto.DepartmentDto;
@@ -19,10 +20,10 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
     @Autowired
-    private ConverterDepartmentToDepartmentDto dtoToEntityClass;
+    private ConverterDepartmentDtoToDepartment dtoToEntityClass;
 
     @Autowired
-    private ConverterDepartmentDtoToDepartment entityToDtoClass;
+    private ConverterDepartmentToDepartmentDto entityToDtoClass;
 
 
 
@@ -41,6 +42,20 @@ public class DepartmentController {
                 .collect(Collectors.toList());
     }
 
+    //GET /departmentPagination?page=0&size=3&sortBy=departmentName
+    @GetMapping("/departmentPagination")
+    public List<DepartmentDto> fetchDepartmentWithPagination(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sortBy){
+
+        return departmentService
+                .fetchDepartmentWithPagination(page, size, sortBy)
+                .stream()
+                .map(entityToDtoClass::convert)
+                .toList();
+    }
+
 
     @GetMapping("/departmentByName/{name}")
     public List<DepartmentDto> findDepartmentByName(@PathVariable String name){
@@ -50,6 +65,10 @@ public class DepartmentController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/departmentProjection")
+    public List<DepartmentDtoProjection> fetchDepartmentProjection(){
+        return  departmentService.getDepartmentDtoProjection();
+    }
 
     @PutMapping("/putDepartment/{departmentId}")
     public DepartmentDto updateDepartment(@RequestBody DepartmentDto departmentDto, @PathVariable("departmentId") Long departmentId) {
